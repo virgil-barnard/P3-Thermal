@@ -1,0 +1,301 @@
+{
+  "clips": 42,
+  "frames": 672,
+  "all_passed": true,
+  "checks": [
+    {
+      "id": "flat_20c",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "flat_25c",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "edge_horizontal_response",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "edge_vertical_response",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "finite_pinhole",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "finite_slit",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "four_bars",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "fiducial_grid_view0",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "fiducial_grid_view1",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "fiducial_grid_view2",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d050_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d050_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d100_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d100_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d200_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_028_d200_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d050_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d050_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d100_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d100_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d200_stationary",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 1,
+      "status": "passed"
+    },
+    {
+      "id": "pair_056_d200_dither4",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d100_rot000",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d100_rot090",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d100_rot180",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d100_rot270",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d200_rot000",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d200_rot090",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d200_rot180",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "triangle_d200_rot270",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "equal_area_single",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "blank_control",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_read_noise",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_broad_psf",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_focus_mismatch",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_independent_motion",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_occlusion",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_correction_drift",
+      "frames": 16,
+      "valid_frames": 15,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_tilt_distortion",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "challenge_cold_target",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "profile_linear_temperature",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    },
+    {
+      "id": "profile_gaussian_temperature",
+      "frames": 16,
+      "valid_frames": 16,
+      "unique_truth_poses": 16,
+      "status": "passed"
+    }
+  ]
+}

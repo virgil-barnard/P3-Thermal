@@ -1,0 +1,28 @@
+## Python environments and tooling
+**/.venv/
+**/.venv-windows/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.egg-info/
+*.py[cod]
+
+## Generated calibration data and inspection output
+thermal-calibration-lab/generated/
+
+## Training products and large model artifacts
+p3thermal-upscaling/runs/
+p3thermal-upscaling/artifacts/
+*.pt
+*.pth
+*.ts
+
+## Captured native-camera sessions and local logs
+p3thermal/reports/
+*.log
+
+## Local editor and OS state
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

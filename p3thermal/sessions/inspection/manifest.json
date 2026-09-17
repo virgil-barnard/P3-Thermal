@@ -1,0 +1,15 @@
+{
+  "complete": true,
+  "frame_format": "P3F1: header followed by validated native bytes",
+  "frames_written": 122,
+  "profile": {
+    "firmware_version": null,
+    "identifier": "p3-provisional-256x192",
+    "product_id": 17826,
+    "raw_frame_size": 197632,
+    "thermal_height": 192,
+    "thermal_width": 256,
+    "vendor_id": 13428
+  },
+  "schema_version": 1
+}

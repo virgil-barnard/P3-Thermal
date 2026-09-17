@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "folder": "thermal-calibration-dataset",
+  "browser": "153.0.8010.0",
+  "checks": [
+    "offline file loading",
+    "native/noiseless/ideal panels",
+    "shared gamma changes displayed pixels",
+    "2x/3x/4x references",
+    "before/after optics selector",
+    "synchronized crop",
+    "frame slider and playback",
+    "role/sequence filtering",
+    "mobile without horizontal overflow",
+    "no JS errors"
+  ]
+}

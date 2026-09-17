@@ -1,0 +1,1 @@
+"""Packaged local browser assets."""

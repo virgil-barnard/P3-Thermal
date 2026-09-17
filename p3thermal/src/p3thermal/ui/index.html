@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P3 Thermal</title>
+<style>
+  :root { color-scheme: dark; font: 14px system-ui; background: #11151d; color: #dce5f2; }
+  body { margin: 0; } main { max-width: 1100px; margin: auto; padding: 20px; }
+  h1 { letter-spacing: .08em; font-size: 18px; } .layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; }
+  .image-wrap { overflow: auto; max-height: 78vh; background: #06090e; border: 1px solid #3a4659; }
+  canvas { display: block; image-rendering: pixelated; cursor: crosshair; }
+  .panel, .metrics { background: #1a2230; border: 1px solid #3a4659; padding: 12px; }
+  .panel { display: grid; gap: 10px; align-content: start; min-width: 0; } label { display: grid; gap: 4px; min-width: 0; }
+  input, select, button { box-sizing: border-box; min-width: 0; width: 100%; min-height: 31px; background: #101720; color: inherit; border: 1px solid #53637a; padding: 5px; }
+  button { cursor: pointer; } .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+   .metrics { white-space: pre-line; overflow-wrap: anywhere; line-height: 1.55; min-height: 22px; } #status { height: 4.7em; overflow: hidden; } small { color: #aebed2; } #histogram { width: 100%; height: 80px; background: #090d13; }
+  @media (max-width: 720px) { main { padding: 12px; } .layout { grid-template-columns: 1fr; } .image-wrap { max-height: 52vh; } }
+</style>
+<main>
+  <h1>P3 THERMAL <small>native values, display-only processing</small></h1>
+  <div class="layout"><div class="image-wrap"><canvas id="image"></canvas></div><aside class="panel">
+    <div class="metrics" id="status">Connecting...</div><div class="metrics" id="cursor">Move over the image</div><div class="metrics" id="roi">Drag to select an ROI</div>
+    <label>Palette <select id="palette"><option value="iron">Iron</option><option value="gray">White hot</option><option value="black">Black hot</option><option value="ice">Ice</option><option value="rainbow">Rainbow</option><option value="ember">Ember</option></select></label>
+    <label>Rotation <select id="rotation"><option value="0">0 degrees</option><option value="90">90 degrees clockwise</option><option value="180">180 degrees</option><option value="270">270 degrees clockwise</option></select></label>
+    <label>Image source <select id="source"><option value="native">Native frame</option><option value="learned-2">Learned 2x</option><option value="learned-3">Learned 3x</option><option value="learned-4">Learned 4x</option></select></label>
+    <label>Digital zoom <input id="zoom" type="range" min="1" max="8" value="2"></label>
+    <div class="row"><label>Range min <input id="minimum" type="number" placeholder="auto"></label><label>Range max <input id="maximum" type="number" placeholder="auto"></label></div>
+    <label>Preview filter <select id="filter"><option value="none">None</option><option value="box">3x3 box average</option><option value="median">3x3 median</option></select></label>
+    <canvas id="histogram" width="256" height="80"></canvas>
+    <div class="row"><label>Low percentile <input id="lowPercent" type="range" min="0" max="49" value="2"><small id="lowLabel">2%</small></label><label>High percentile <input id="highPercent" type="range" min="51" max="100" value="98"><small id="highLabel">98%</small></label></div>
+    <button id="auto">Use percentile auto range</button>
+    <small>Drag for displayed-pixel ROI statistics. Filters, palette, and learned previews never alter recordings.</small>
+    <label>Session directory <input id="directory" value="sessions/live-session"></label><button id="record">Start recording</button>
+  </aside></div>
+</main>
+<script>
+const image=document.querySelector('#image'),context=image.getContext('2d'),histogram=document.querySelector('#histogram'),histogramContext=histogram.getContext('2d');
+ const ui=Object.fromEntries(['status','cursor','roi','palette','rotation','source','zoom','minimum','maximum','filter','auto','lowPercent','highPercent','lowLabel','highLabel','directory','record'].map(id=>[id,document.getElementById(id)]));
+let values,width=256,height=192,autoRange,roi,dragStart,previousCount=0,previousTime=performance.now();
+const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));
+function selectedRange(){if(ui.minimum.value&&ui.maximum.value)return[+ui.minimum.value,+ui.maximum.value];return autoRange||[0,1]}
+function labels(){ui.lowLabel.textContent=`${ui.lowPercent.value}%`;ui.highLabel.textContent=`${ui.highPercent.value}%`}
+function percentileRange(){const sorted=Array.from(values).sort((a,b)=>a-b);return[sorted[Math.floor(sorted.length*ui.lowPercent.value/100)],sorted[Math.floor(sorted.length*ui.highPercent.value/100)]]}
+function filtered(){if(ui.filter.value==='none')return values;const output=new Uint16Array(values.length);for(let y=0;y<height;y++)for(let x=0;x<width;x++){const nearby=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)nearby.push(values[clamp(y+dy,0,height-1)*width+clamp(x+dx,0,width-1)]);output[y*width+x]=ui.filter.value==='box'?nearby.reduce((a,b)=>a+b,0)/9:nearby.sort((a,b)=>a-b)[4]}return output}
+function colour(t){if(ui.palette.value==='gray'){const c=255*t;return[c,c,c]}if(ui.palette.value==='black'){const c=255*(1-t);return[c,c,c]}if(ui.palette.value==='ice')return[40*t,210*t,255*(.25+.75*t)];if(ui.palette.value==='rainbow')return[255*Math.sin(Math.PI*t),255*Math.sin(Math.PI*(t+.33)),255*Math.sin(Math.PI*(t+.66))].map(value=>Math.max(0,value));if(ui.palette.value==='ember')return[255*t,110*Math.pow(t,2),25*Math.pow(t,5)];return[255*t,255*Math.pow(t,.65),255*(1-t)*(1-t)]}
+function drawHistogram(low,high){const bins=new Uint32Array(64);for(const value of values)bins[clamp(Math.floor(64*(value-low)/(high-low||1)),0,63)]++;histogramContext.clearRect(0,0,256,80);histogramContext.fillStyle='#76a9e8';const peak=Math.max(...bins,1);bins.forEach((count,index)=>histogramContext.fillRect(index*4,80-80*count/peak,3,80*count/peak))}
+function draw(){if(!values)return;const zoom=+ui.zoom.value,display=filtered(),[low,high]=selectedRange(),source=new OffscreenCanvas(width,height),sourceContext=source.getContext('2d'),pixels=sourceContext.createImageData(width,height),rotation=+ui.rotation.value,sideways=rotation===90||rotation===270;for(let index=0;index<display.length;index++){const[r,g,b]=colour(clamp((display[index]-low)/(high-low||1),0,1)),p=index*4;pixels.data[p]=r;pixels.data[p+1]=g;pixels.data[p+2]=b;pixels.data[p+3]=255}sourceContext.putImageData(pixels,0,0);if(roi){sourceContext.strokeStyle='#fff';sourceContext.lineWidth=1;sourceContext.strokeRect(roi.x+.5,roi.y+.5,roi.w,roi.h)}image.width=(sideways?height:width)*zoom;image.height=(sideways?width:height)*zoom;context.imageSmoothingEnabled=false;context.save();if(rotation===90){context.translate(image.width,0);context.rotate(Math.PI/2)}else if(rotation===180){context.translate(image.width,image.height);context.rotate(Math.PI)}else if(rotation===270){context.translate(0,image.height);context.rotate(-Math.PI/2)}context.drawImage(source,0,0,width*zoom,height*zoom);context.restore();drawHistogram(low,high)}
+function coordinates(event){const rect=image.getBoundingClientRect(),zoom=+ui.zoom.value,dx=Math.floor((event.clientX-rect.left)*image.width/rect.width/zoom),dy=Math.floor((event.clientY-rect.top)*image.height/rect.height/zoom),rotation=+ui.rotation.value;let x=dx,y=dy;if(rotation===90)[x,y]=[dy,height-1-dx];else if(rotation===180)[x,y]=[width-1-dx,height-1-dy];else if(rotation===270)[x,y]=[width-1-dy,dx];return{x:clamp(x,0,width-1),y:clamp(y,0,height-1)}}
+function updateRoi(){if(!roi||!values){ui.roi.textContent='Drag to select an ROI';return}let min=Infinity,max=-Infinity,sum=0,count=0;for(let y=roi.y;y<roi.y+roi.h;y++)for(let x=roi.x;x<roi.x+roi.w;x++){const value=values[y*width+x];min=Math.min(min,value);max=Math.max(max,value);sum+=value;count++}ui.roi.textContent=`ROI ${roi.w}x${roi.h}: min ${min}, mean ${(sum/count).toFixed(1)}, max ${max}`}
+image.onpointerdown=event=>{dragStart=coordinates(event);image.setPointerCapture(event.pointerId)};
+image.onpointermove=event=>{if(!values)return;const point=coordinates(event);if(dragStart){roi={x:Math.min(dragStart.x,point.x),y:Math.min(dragStart.y,point.y),w:Math.abs(point.x-dragStart.x)+1,h:Math.abs(point.y-dragStart.y)+1};draw();updateRoi()}ui.cursor.textContent=`Cursor x ${point.x}, y ${point.y}, raw ${values[point.y*width+point.x]}`};
+image.onpointerup=()=>{dragStart=null};
+ui.auto.onclick=()=>{if(!values)return;ui.minimum.value='';ui.maximum.value='';autoRange=percentileRange();draw()};
+ ['palette','rotation','zoom','minimum','maximum','filter'].forEach(id=>ui[id].oninput=draw);
+ ui.source.onchange=async()=>{if(ui.source.value==='native')return;const scale=+ui.source.value.slice(-1);await fetch('/api/preview',{method:'POST',body:JSON.stringify({scale})})};
+['lowPercent','highPercent'].forEach(id=>ui[id].oninput=()=>{if(+ui.lowPercent.value>=+ui.highPercent.value){if(id==='lowPercent')ui.highPercent.value=+ui.lowPercent.value+1;else ui.lowPercent.value=+ui.highPercent.value-1}labels();if(values){ui.minimum.value='';ui.maximum.value='';autoRange=percentileRange();draw()}});
+ui.record.onclick=async()=>{const status=await fetch('/api/status').then(response=>response.json()),endpoint=status.recording?'/api/recording/stop':'/api/recording/start';await fetch(endpoint,{method:'POST',body:status.recording?undefined:JSON.stringify({directory:ui.directory.value})})};
+ async function refresh(){try{const learned=ui.source.value!=='native',response=await fetch(learned?'/api/preview':'/api/frame');if(response.ok){const nextWidth=Number(response.headers.get('X-P3-Width')),nextHeight=Number(response.headers.get('X-P3-Height')),body=await response.arrayBuffer();if(Number.isInteger(nextWidth)&&Number.isInteger(nextHeight)&&nextWidth>0&&nextHeight>0&&body.byteLength===nextWidth*nextHeight*2){width=nextWidth;height=nextHeight;values=new Uint16Array(body);if(!ui.minimum.value||!ui.maximum.value)autoRange=percentileRange();draw();updateRoi()}}const status=await fetch('/api/status').then(response=>response.json()),now=performance.now(),fps=(status.frames_received-previousCount)*1000/(now-previousTime),preview=status.learned_preview;previousCount=status.frames_received;previousTime=now;ui.source.disabled=!preview.available;if(!preview.available&&learned)ui.source.value='native';const learnedStatus=preview.available?` | learned ${preview.scale}x ${preview.inference_ms??'waiting'} ms`:'';ui.status.textContent=`frames ${status.frames_received} | ${fps.toFixed(1)} preview fps | ${status.quality||'waiting'} | recording ${status.recording?'on':'off'}${learnedStatus}\nTemperature interpretation: ${status.temperature_interpretation}`;ui.record.textContent=status.recording?'Stop recording':'Start recording'}catch(error){ui.status.textContent=`Connection error: ${error}`}setTimeout(refresh,100)}
+labels();refresh();
+</script>
+</html>
