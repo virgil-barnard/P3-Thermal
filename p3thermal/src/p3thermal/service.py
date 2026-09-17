@@ -49,6 +49,7 @@ class LiveService:
         self._preview_generation = 0
         self._preview_frames_completed = 0
         self._preview_frames_skipped = 0
+        self._preview_error: str | None = None
         self._worker = threading.Thread(target=self._run, daemon=True)
         self._preview_ready = threading.Condition(self._lock)
         self._preview_worker = threading.Thread(target=self._run_preview, daemon=True)
@@ -95,6 +96,7 @@ class LiveService:
                     else round(self._preview.inference_ns / 1_000_000, 2),
                     "frames_completed": self._preview_frames_completed,
                     "frames_skipped": self._preview_frames_skipped,
+                    "error": self._preview_error,
                 },
             }
 
@@ -172,10 +174,13 @@ class LiveService:
             try:
                 values, inference_ns = self._preview_runtime.render(frame, scale)
             except Exception as exc:
-                with self._lock:
-                    self._error = f"learned preview {type(exc).__name__}: {exc}"
-                return
+                with self._preview_ready:
+                    # A sidecar can restart or briefly reject a request; this must not stop capture.
+                    self._preview_error = f"{type(exc).__name__}: {exc}"
+                    self._preview_ready.wait(timeout=1)
+                continue
             with self._preview_ready:
+                self._preview_error = None
                 if frame.sequence > completed_sequence + 1:
                     self._preview_frames_skipped += frame.sequence - completed_sequence - 1
                 completed_sequence = frame.sequence

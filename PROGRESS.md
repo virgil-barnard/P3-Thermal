@@ -43,14 +43,26 @@ validated; it is not currently available training supervision.
 
 ## Implemented This Session
 
-- Began the final comprehensive synthetic corpus at
-  `thermal-calibration-lab/generated/comprehensive-2x-3x-4x`: expanded suite,
-  three independent repetitions, seed `20260916`, 16 frames per clip, 24x
-  supersampling, and eight boundary samples. The long native-Windows build is
-  running resumably in process `6740`; do not train from the directory until it
-  writes `manifest.json` and `validation.json` successfully. Added a guarded
-  `thermal_calibration generate --resume` mode to reuse only complete,
-  scenario-matching clips after an execution-time interruption.
+- Added tracked documentation assets under `assets/`: a learned-preview screen
+  recording and representative native/acquisition-4x/ideal-4x synthetic triangle
+  images. The root README links them and clearly labels the references as
+  assumed-camera simulator outputs. Full generated datasets remain ignored.
+
+- Added a guarded `thermal_calibration generate --resume` mode to reuse only
+  complete, scenario-matching clips after an execution-time interruption. The
+  attempted three-repetition comprehensive build was lost in a computer restart
+  and is not evidence. The user subsequently generated and validated the
+  available `thermal-calibration-lab/my-dataset` starter corpus: 42 clips, 672
+  frames, `all_passed: true`.
+- Trained the clearly labeled starter-suite baseline on that validated corpus:
+  `p3thermal-upscaling/runs/starter-baseline/checkpoint.pt`, 20 CUDA epochs on
+  the RTX 4090, target `acquisition_hr*_dn`. Held-out simulator MSE was
+  0.010815 (2x), 0.005477 (3x), and 0.004300 (4x), versus bicubic 0.292012,
+  0.295036, and 0.294476 respectively. Exported
+  `p3thermal-upscaling/artifacts/p3-upscaler-starter-baseline.ts` and its
+  version-1 metadata; a CUDA TorchScript load confirmed 384x512, 576x768, and
+  768x1024 outputs. This is starter-corpus simulator evidence only, not the
+  final comprehensive model, real-P3 validation, or real-scene SR evidence.
 
 - Reviewed the P3 nominal-intrinsics, generator, forward-model, and camera-viewer
   documentation. Recorded that the generator's verified current contract is
@@ -108,6 +120,18 @@ validated; it is not currently available training supervision.
   displayed the learned 2x preview through the loopback GPU sidecar. This is a
   functional integration observation, not a latency, recording-noninterference,
   or reconstruction-quality qualification.
+- Updated the viewer defaults to Ember palette and 270-degree clockwise
+  rotation. It now displays original native and selected learned-scale previews
+  side by side, each with independent zoom, histogram, canvas state, and ROI;
+  palette, rotation, filter, and display range remain shared display-only
+  controls.
+- Fixed learned-preview stalls caused by transient sidecar errors: the preview
+  worker now records the error separately, waits one second, and retries the
+  newest frame instead of setting the acquisition error and exiting. Added a
+  regression test. Added visible per-pane zoom multipliers and shared
+  nearest-neighbor/low-quality-smoothed/high-quality-smoothed display
+  interpolation options for fair original-versus-learned visual comparison.
+  `p3thermal` offline verification: 19 passed, Ruff clean.
 
 - Added the root `AGENTS.md` with workspace boundaries, Windows-only USB rules,
   module ownership boundaries, and mandatory progress-record maintenance.

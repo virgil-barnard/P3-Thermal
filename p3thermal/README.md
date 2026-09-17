@@ -77,15 +77,18 @@ For a live feed, run this command and leave it running, then open
 .\.venv-windows\Scripts\python.exe -m p3thermal.cli serve
 ```
 
-The viewer has native and optional learned 2x/3x/4x image sources, 1-8x
-pixel-preserving digital zoom, six selectable palettes,
+The viewer shows native and optional learned 2x/3x/4x images side by side,
+with independent 1-8x pixel-preserving digital zoom and histograms. It defaults
+to Ember palette and 270-degree clockwise rotation, and provides six selectable palettes,
 quarter-turn display rotation,
 automatic/manual raw range, raw histogram, box/median preview filters, cursor
 and drag-ROI min/mean/max readouts, quality status, preview rate, and recording
-controls. All processing is display-only: it never changes recorded native
-frames. It intentionally does not show temperatures because native values have
-not yet been validated against the manufacturer application and an independent
-reference.
+controls. Zoom sliders show their selected multiplier. Choose nearest-neighbor,
+low-quality smoothed, or high-quality smoothed display interpolation; the same
+selection is applied to both panes for visual comparison. All processing is
+display-only: it never changes recorded native frames. It intentionally does not
+show temperatures because native values have not yet been validated against the
+manufacturer application and an independent reference.
 
 For live inference, first run the `p3thermal-upscaling` loopback sidecar from
 its dedicated environment. Then enable the learned-preview control without
@@ -98,7 +101,9 @@ adding Torch to this camera environment:
 Inference has one latest-frame worker and one output slot; it may skip preview
 inputs under load while native capture and recording remain unchanged. The
 learned image is synthetic-model output in native-DN units, not a
-measured-resolution or temperature claim.
+measured-resolution or temperature claim. A temporary sidecar request failure
+is shown in learned-preview status and retried against the newest frame; it does
+not stop capture, recording, or the preview worker.
 
 The learned 2x viewer path was functionally confirmed on the qualified Windows
 host on 17 September 2026. Latency, skipped-preview behavior, recording

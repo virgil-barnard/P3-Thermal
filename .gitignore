@@ -9,6 +9,7 @@
 
 ## Generated calibration data and inspection output
 thermal-calibration-lab/generated/
+thermal-calibration-lab/my-dataset/
 
 ## Training products and large model artifacts
 p3thermal-upscaling/runs/

@@ -44,6 +44,17 @@ class Preview:
         return values, 1_500_000
 
 
+class FlakyPreview(Preview):
+    def __init__(self) -> None:
+        self.failed = False
+
+    def render(self, frame: ThermalFrame, scale: int) -> tuple[np.ndarray, int]:
+        if not self.failed:
+            self.failed = True
+            raise ConnectionError("sidecar restarted")
+        return super().render(frame, scale)
+
+
 def test_live_service_keeps_latest_frame_and_can_start_recording(
     tmp_path: Path,
 ) -> None:
@@ -125,4 +136,20 @@ def test_http_learned_preview_is_derived_and_scale_selectable() -> None:
     finally:
         server.shutdown()
         server.server_close()
+        service.close()
+
+
+def test_learned_preview_retries_after_a_transient_sidecar_error() -> None:
+    service = LiveService(Source(), FlakyPreview())
+    service.start()
+    try:
+        for _ in range(300):
+            if service.latest_preview() is not None:
+                break
+            time.sleep(0.01)
+        else:
+            raise AssertionError("learned preview did not recover")
+        assert service.status()["error"] is None
+        assert service.status()["learned_preview"]["error"] is None
+    finally:
         service.close()

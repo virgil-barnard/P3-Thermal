@@ -48,6 +48,11 @@ and exposure blur. Invalid input frames are skipped and `frame_to_truth` maps
 each observation to its target. The command writes per-scale nearest/bicubic and
 model MSE metrics to `metrics.json`; these measure only the declared simulator.
 
+The available `p3-upscaler-starter-baseline.ts` was trained on the validated
+42-clip starter corpus. It is intentionally not named or treated as the final
+model; a comprehensive independent-repetition corpus and real-P3 evaluation
+remain required for that claim.
+
 `p3-upscaler.ts` is a TorchScript artifact whose `forward(raw, scale)` accepts a
 float tensor shaped `(N, 1, 192, 256)` in native DN units and returns native-DN
 output at the selected 2x, 3x, or 4x resolution. It is intended for bounded
