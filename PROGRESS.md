@@ -43,10 +43,17 @@ validated; it is not currently available training supervision.
 
 ## Implemented This Session
 
+- Added a root-README Mermaid diagram of the exported shared-trunk multi-scale
+  upscaler: per-frame DN normalization, bicubic residual base, three 3x3
+  convolution/ReLU feature layers, scale-specific pixel-shuffle heads, residual
+  addition, and native-DN restoration.
+
 - Added tracked documentation assets under `assets/`: a learned-preview screen
-  recording and representative native/acquisition-4x/ideal-4x synthetic triangle
+  recording and representative native/acquisition-4x/ideal-4x synthetic four-bars
   images. The root README links them and clearly labels the references as
   assumed-camera simulator outputs. Full generated datasets remain ignored.
+- Added matching native, acquisition-4x, and ideal-4x documentation images for
+  fiducial-grid view 0 and the synthetic challenge-occlusion scenario.
 
 - Added a guarded `thermal_calibration generate --resume` mode to reuse only
   complete, scenario-matching clips after an execution-time interruption. The
